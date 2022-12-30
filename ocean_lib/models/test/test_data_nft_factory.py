@@ -105,7 +105,7 @@ def test_combo_functions(
             publish_market_order_fees=TokenFeeInfo(
                 address=publisher_wallet.address,
                 token=ZERO_ADDRESS,
-                amount=Web3.toWei("0.0005", "ether"),
+                amount="0.0005 ether",
             ),
         ),
         publisher_wallet,
@@ -130,8 +130,8 @@ def test_combo_functions(
         fixed_price_allowed_swapper=ZERO_ADDRESS,
         fixed_price_base_token_decimals=18,
         fixed_price_datatoken_decimals=18,
-        fixed_price_rate=Web3.toWei("1", "ether"),
-        fixed_price_publish_market_swap_fee_amount=Web3.toWei("0.001", "ether"),
+        fixed_price_rate="1 ether",
+        fixed_price_publish_market_swap_fee_amount="0.001 ether",
         fixed_price_with_mint=0,
         wallet=publisher_wallet,
     )
@@ -152,8 +152,8 @@ def test_combo_functions(
             "DTP",
             fee_manager=consumer_wallet.address,
         ),
-        dispenser_max_tokens=Web3.toWei(1, "ether"),
-        dispenser_max_balance=Web3.toWei(1, "ether"),
+        dispenser_max_tokens="1 ether",
+        dispenser_max_balance="1 ether",
         dispenser_with_mint=True,
         dispenser_allowed_swapper=ZERO_ADDRESS,
         wallet=publisher_wallet,
@@ -172,7 +172,7 @@ def test_combo_functions(
         metadata_decryptor_url="http://myprovider:8030",
         metadata_decryptor_address=b"0x123",
         metadata_flags=bytes(0),
-        metadata_data=Web3.toHex(text="my cool metadata."),
+        metadata_data=b"my cool metadata.",
         metadata_data_hash=create_checksum("my cool metadata."),
         metadata_proofs=[],
         wallet=publisher_wallet,
@@ -241,7 +241,8 @@ def test_start_multiple_order(
 
     # Tests starting multiple token orders successfully
     datatoken = Datatoken(config, datatoken.address)
-    dt_amount = Web3.toWei("2", "ether")
+    dt_amount = "2 ether"
+    dt_amount_in_wei = Web3.toWei("2", "ether")
     mock_dai_contract_address = get_address_of_type(config, "MockDAI")
     assert datatoken.balanceOf(consumer_wallet.address) == 0
 
@@ -307,7 +308,9 @@ def test_start_multiple_order(
     assert registered_erc20_start_order_event["consumer"] == consumer_wallet.address
 
     assert datatoken.balanceOf(consumer_wallet.address) == 0
-    assert datatoken.balanceOf(datatoken.getPaymentCollector()) == (dt_amount * 0.97)
+    assert datatoken.balanceOf(datatoken.getPaymentCollector()) == (
+        dt_amount_in_wei * 0.97
+    )
 
 
 @pytest.mark.unit

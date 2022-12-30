@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 import pytest
-from web3 import Web3
 
 from ocean_lib.models.data_nft import DataNFTArguments, DataNFTPermissions
 from ocean_lib.models.data_nft_factory import DataNFTFactoryContract
@@ -117,7 +116,7 @@ def test_permissions(
             0,
             consumer_wallet.address,
             10,
-            Web3.toHex(text="SomeData"),
+            b"SomeData",
             {"from": another_consumer_wallet},
         )
 
@@ -127,7 +126,7 @@ def test_permissions(
         0,
         consumer_wallet.address,
         10,
-        Web3.toHex(text="SomeData"),
+        b"SomeData",
         {"from": consumer_wallet},
     )
     assert tx, "Could not execute call to consumer."
@@ -221,9 +220,9 @@ def test_success_update_metadata(publisher_wallet, consumer_wallet, config, data
         1,
         "http://myprovider:8030",
         b"0x123",
-        Web3.toBytes(hexstr=BLOB),
-        Web3.toBytes(hexstr=BLOB),
-        Web3.toBytes(hexstr=BLOB),
+        BLOB,
+        BLOB,
+        BLOB,
         [],
         {"from": consumer_wallet},
     )
@@ -237,9 +236,9 @@ def test_success_update_metadata(publisher_wallet, consumer_wallet, config, data
         1,
         "http://foourl",
         b"0x123",
-        Web3.toBytes(hexstr=BLOB),
-        Web3.toBytes(hexstr=BLOB),
-        Web3.toBytes(hexstr=BLOB),
+        BLOB,
+        BLOB,
+        BLOB,
         [],
         {"from": consumer_wallet},
     )
@@ -255,9 +254,9 @@ def test_success_update_metadata(publisher_wallet, consumer_wallet, config, data
             1,
             "http://foourl",
             b"0x123",
-            Web3.toBytes(hexstr=BLOB),
-            Web3.toBytes(hexstr=BLOB),
-            Web3.toBytes(hexstr=BLOB),
+            BLOB,
+            BLOB,
+            BLOB,
             1,
             "https://anothernewurl.com/nft/",
             [],
@@ -335,7 +334,7 @@ def test_create_datatoken(
             minter=publisher_wallet.address,
             fee_manager=consumer_wallet.address,
             bytess=[b""],
-            cap=Web3.toWei("0.1", "ether"),
+            cap="0.1 ether",
         ),
         publisher_wallet,
     )
@@ -345,7 +344,7 @@ def test_create_datatoken(
         DatatokenArguments(
             name="DatatokenEnterpriseDT1",
             symbol="DatatokenEnterpriseDT1Symbol",
-            cap=Web3.toWei("0.1", "ether"),
+            cap="0.1 ether",
         ),
         publisher_wallet,
     )
@@ -357,7 +356,7 @@ def test_create_datatoken_with_usdc_order_fee(
 ):
     """Create an ERC20 with order fees ( 5 USDC, going to publishMarketAddress)"""
     usdc = Datatoken(config, get_address_of_type(config, "MockUSDC"))
-    publish_market_order_fee_amount_in_wei = Web3.toWei(5, "ether")
+    publish_market_order_fee_amount = "5 ether"
     dt = data_nft.create_datatoken(
         DatatokenArguments(
             name="DT1",
@@ -365,7 +364,7 @@ def test_create_datatoken_with_usdc_order_fee(
             publish_market_order_fees=TokenFeeInfo(
                 address=publisher_wallet.address,
                 token=usdc.address,
-                amount=publish_market_order_fee_amount_in_wei,
+                amount=publish_market_order_fee_amount,
             ),
         ),
         publisher_wallet,
@@ -375,7 +374,7 @@ def test_create_datatoken_with_usdc_order_fee(
     publish_market_fees = dt.get_publish_market_order_fees()
     assert publish_market_fees.address == publisher_wallet.address
     assert publish_market_fees.token == usdc.address
-    assert publish_market_fees.amount == publish_market_order_fee_amount_in_wei
+    assert publish_market_fees.amount == publish_market_order_fee_amount
 
 
 @pytest.mark.unit
@@ -481,10 +480,10 @@ def test_erc721_datatoken_functions(
     # Tests transfer functions
     datatoken.mint(
         consumer_wallet.address,
-        Web3.toWei("0.2", "ether"),
+        "0.2 ether",
         {"from": publisher_wallet},
     )
-    assert datatoken.balanceOf(consumer_wallet.address) == Web3.toWei("0.2", "ether")
+    assert datatoken.balanceOf(consumer_wallet.address) == "0.2 ether"
     assert data_nft.ownerOf(1) == publisher_wallet.address
 
     data_nft.transferFrom(
@@ -509,17 +508,17 @@ def test_erc721_datatoken_functions(
     with pytest.raises(Exception, match="NOT MINTER"):
         datatoken.mint(
             consumer_wallet.address,
-            Web3.toWei("1", "ether"),
+            "1 ether",
             {"from": consumer_wallet},
         )
 
     datatoken.addMinter(consumer_wallet.address, {"from": consumer_wallet})
     datatoken.mint(
         consumer_wallet.address,
-        Web3.toWei("0.2", "ether"),
+        "0.2 ether",
         {"from": consumer_wallet},
     )
-    assert datatoken.balanceOf(consumer_wallet.address) == Web3.toWei("0.4", "ether")
+    assert datatoken.balanceOf(consumer_wallet.address) == "0.4 ether"
 
 
 @pytest.mark.unit
