@@ -1,3 +1,7 @@
+<!--
+Copyright 2022 Ocean Protocol Foundation
+SPDX-License-Identifier: Apache-2.0
+-->
 # Quickstart: Data Farming Flow
 
 This README shows how to do steps in Ocean Data Farming (DF), where you curate data assets to earn rewards. It also helps to democratize "wash consume" until it becomes unprofitable.
@@ -24,7 +28,7 @@ Ensure that you've already (a) [installed Ocean](install.md), and (b) [set up lo
 First, let's set some key parameters for veOCEAN and DF. On Ganache, you can use these values as-is. But on Eth mainnet, you must choose your own. In the same Python console:
 ```python
 # On your asset, your DCV = DT_price * num_consumes
-# Your asset gets rewards pro-rata for its DCV compared to other assets' DCVs. 
+# Your asset gets rewards pro-rata for its DCV compared to other assets' DCVs.
 DT_price = 100.0 # number of OCEAN needed to buy one datatoken
 num_consumes = 3
 
@@ -42,14 +46,14 @@ WEEK = 7 * 86400 # seconds in a week
 t0 = chain.time()
 t1 = t0 // WEEK * WEEK + WEEK #this is a Thursday, because Jan 1 1970 was
 t2 = t1 + WEEK
-chain.sleep(t1 - t0) 
+chain.sleep(t1 - t0)
 chain.mine()
 
 #we're now at the beginning of the week. So, lock
 veOCEAN = ocean.veOCEAN
-OCEAN.approve(veOCEAN.address, to_wei(amt_OCEAN_lock), {"from" : alice})
-veOCEAN.withdraw({"from": alice}) #withdraw old tokens first
-veOCEAN.create_lock(to_wei(amt_OCEAN_lock), t2, {"from": alice})
+OCEAN.approve(veOCEAN.address, f"{amt_OCEAN_lock} ether", {"from" : alice})
+veOCEAN.withdraw({"from": alice}) # withdraw old tokens first
+veOCEAN.create_lock(f"{amt_OCEAN_lock} ether", t2, {"from": alice})
 ```
 
 
@@ -67,12 +71,12 @@ print(f"Just published asset, with data_NFT.address={data_NFT.address}")
 
 #create exchange
 exchange = DT.create_exchange(
-    to_wei(DT_price), OCEAN.address, {"from": alice}
+    f"{DT_price} ether", OCEAN.address, {"from": alice}
 )
 
 #make datatokens available on the exchange
-DT.mint(alice, to_wei(num_consumes), {"from": alice})
-DT.approve(exchange.address, to_wei(num_consumes), {"from": alice})
+DT.mint(alice, f"{num_consumes} ether", {"from": alice})
+DT.approve(exchange.address, f"{num_consumes} ether", {"from": alice})
 ```
 
 
@@ -93,11 +97,11 @@ In the meantime, this README helps level the playing field around wash consume. 
 ```python
 # Alice buys datatokens from herself
 OCEAN_pay = DT_price * num_consumes
-OCEAN_alice = from_wei(OCEAN.balanceOf(alice))
+OCEAN_alice = OCEAN.balanceOf(alice)
 assert OCEAN_alice >= OCEAN_pay, f"Have just {OCEAN_alice} OCEAN"
 
-OCEAN.approve(exchange.address, to_wei(OCEAN_alice), {"from": alice})
-exchange.buy_DT(to_wei(num_consumes), {"from": alice})
+OCEAN.approve(exchange.address, OCEAN_alice, {"from": alice})
+exchange.buy_DT(f"{num_consumes} ether", {"from": alice})
 
 DT_bal = from_wei(DT.balanceOf(alice))
 assert DT_bal >= num_consumes, \
@@ -120,14 +124,14 @@ WEEK = 7 * 86400 # seconds in a week
 t0 = chain.time()
 t1 = t0 // WEEK * WEEK + WEEK
 t2 = t1 + WEEK
-chain.sleep(t1 - t0) 
+chain.sleep(t1 - t0)
 chain.mine()
 
 #Rewards can be claimed via code or webapp, at your leisure. Let's do it now.
 OCEAN_before = from_wei(OCEAN.balanceOf(alice))
 ocean.ve_fee_distributor.claim({"from": alice})
 OCEAN_after = from_wei(OCEAN.balanceOf(alice))
-print(f"Just claimed {OCEAN_after - OCEAN_before} OCEAN rewards") 
+print(f"Just claimed {OCEAN_after - OCEAN_before} OCEAN rewards")
 ```
 
 ## 7. Repeat steps 1-6, for Eth mainnet

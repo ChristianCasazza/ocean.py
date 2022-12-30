@@ -141,7 +141,7 @@ def test_dispense_and_order_with_defaults(
     )
 
     assert tx
-    assert DT.totalSupply() == (to_wei(0) if template_index == 2 else to_wei(1))
+    assert DT.totalSupply() == 0 if template_index == 2 else "1 ether"
 
 
 @pytest.mark.unit

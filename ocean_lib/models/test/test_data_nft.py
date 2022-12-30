@@ -7,7 +7,7 @@ import pytest
 from ocean_lib.models.data_nft import DataNFTArguments, DataNFTPermissions
 from ocean_lib.models.data_nft_factory import DataNFTFactoryContract
 from ocean_lib.models.datatoken import Datatoken, DatatokenArguments, TokenFeeInfo
-from ocean_lib.ocean.util import get_address_of_type, to_wei
+from ocean_lib.ocean.util import get_address_of_type
 
 BLOB = "f8929916089218bdb4aa78c3ecd16633afd44b8aef89299160"
 
@@ -622,13 +622,13 @@ def test_transfer_nft(
     ]  # publisher is minter now
 
     OCEAN = publisher_ocean.OCEAN_token
-    OCEAN.approve(factory_router.address, to_wei(10000), {"from": consumer_wallet})
+    OCEAN.approve(factory_router.address, "10000 ether", {"from": consumer_wallet})
 
     # Make consumer the publish market order fee address instead of publisher
     receipt = datatoken.setPublishingMarketFee(
         consumer_wallet.address,
         OCEAN.address,
-        to_wei(1),
+        "1 ether",
         {"from": publisher_wallet},
     )
 
@@ -638,7 +638,7 @@ def test_transfer_nft(
     publish_fees = datatoken.get_publish_market_order_fees()
     assert publish_fees.address == consumer_wallet.address
     assert publish_fees.token == OCEAN.address
-    assert publish_fees.amount == to_wei(1)
+    assert publish_fees.amount == "1 ether"
 
 
 def test_nft_transfer_with_fre(
@@ -655,9 +655,9 @@ def test_nft_transfer_with_fre(
 
     # The NFT owner (publisher) has ERC20 deployer role & can deploy an exchange
     exchange = datatoken.create_exchange(
-        rate=to_wei(1),
+        rate="1 ether",
         base_token_addr=OCEAN.address,
-        publish_market_fee=to_wei(0.01),
+        publish_market_fee="0.01 ether",
         tx_dict={"from": publisher_wallet},
     )
 
@@ -666,7 +666,7 @@ def test_nft_transfer_with_fre(
     details = exchange.details
     assert details.owner == publisher_wallet.address
     assert details.datatoken == datatoken.address
-    assert details.fixed_rate == to_wei(1)
+    assert details.fixed_rate == "1 ether"
 
     # Now do a transfer
     receipt = data_nft.safeTransferFrom(
