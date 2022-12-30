@@ -101,7 +101,7 @@ def test_start_order_fees(
     # Mint 50 datatokens in consumer wallet from publisher.
     dt.mint(
         consumer_wallet.address,
-        Web3.toWei("50", "ether"),
+        "50 ether",
         {"from": publisher_wallet},
     )
 

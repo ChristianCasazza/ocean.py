@@ -8,7 +8,6 @@ from typing import List, Optional
 
 import pytest
 from attr import dataclass
-from web3.main import Web3
 
 from ocean_lib.agreements.service_types import ServiceTypes
 from ocean_lib.assets.ddo import DDO
@@ -148,7 +147,7 @@ def _mint_and_build_compute_input(
         if datatoken.isMinter(consumer_wallet.address)
         else publisher_wallet
     )
-    datatoken.mint(consumer_wallet.address, Web3.toWei(10, "ether"), {"from": minter})
+    datatoken.mint(consumer_wallet.address, "10 ether", {"from": minter})
 
     return ComputeInput(
         dataset_and_userdata.ddo,

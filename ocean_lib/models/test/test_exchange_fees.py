@@ -97,8 +97,8 @@ def test_exchange_swap_fees(
         amount_to_transfer=int_units("1500", bt.decimals()),
     )
 
-    publish_market_swap_fee = Web3.toWei(publish_market_swap_fee, "ether")
-    consume_market_swap_fee = Web3.toWei(consume_market_swap_fee, "ether")
+    publish_market_swap_fee = f"{publish_market_swap_fee} ether"
+    consume_market_swap_fee = f"{consume_market_swap_fee} ether"
 
     bt_per_dt_in_wei = Web3.toWei(bt_per_dt, "ether")
     exchange = dt.create_exchange(

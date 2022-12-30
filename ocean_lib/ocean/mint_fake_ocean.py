@@ -23,9 +23,7 @@ def mint_fake_OCEAN(config: dict) -> None:
 
     OCEAN_token = Datatoken(config, address=get_ocean_token_address(config))
     amt_distribute = Web3.toWei("2000", "ether")
-    OCEAN_token.mint(
-        deployer_wallet.address, Web3.toWei("20000", "ether"), {"from": deployer_wallet}
-    )
+    OCEAN_token.mint(deployer_wallet.address, "20000 ether", {"from": deployer_wallet})
     for key_label in ["TEST_PRIVATE_KEY1", "TEST_PRIVATE_KEY2", "TEST_PRIVATE_KEY3"]:
         key = os.environ.get(key_label)
         if not key:

@@ -501,7 +501,7 @@ class Datatoken(ContractBase):
             exchange = OneExchange(fre_address, exchange)
 
         exchange.buy_DT(
-            datatoken_amt=Web3.toWei(1, "ether"),
+            datatoken_amt="1 ether",
             consume_market_fee_addr=consume_market_fees.address,
             consume_market_fee=consume_market_fees.amount,
             tx_dict=transaction_parameters,

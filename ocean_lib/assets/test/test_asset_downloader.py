@@ -7,7 +7,6 @@ from unittest.mock import patch
 
 import pytest
 from requests.exceptions import InvalidURL
-from web3.main import Web3
 
 from ocean_lib.agreements.consumable import AssetNotConsumable, ConsumableCodes
 from ocean_lib.agreements.service_types import ServiceTypes
@@ -156,7 +155,7 @@ def test_ocean_assets_download_destination_file(
 
     datatoken.mint(
         publisher_wallet.address,
-        Web3.toWei("50", "ether"),
+        "50 ether",
         {"from": publisher_wallet},
     )
 

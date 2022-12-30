@@ -79,12 +79,12 @@ def test_main(
     ]
 
     # Should succeed to setData if erc20Deployer
-    value = Web3.toHex(text="SomeData")
+    value = b"SomeData"
     key = Web3.keccak(hexstr=datatoken.address)
 
     datatoken.setData(value, {"from": publisher_wallet})
 
-    assert Web3.toHex(data_nft.getData(key)) == value
+    assert data_nft.getData(key).hex() == value.hex()
 
     # Should succeed to call cleanPermissions if NFTOwner
     datatoken.cleanPermissions({"from": publisher_wallet})
@@ -107,12 +107,8 @@ def test_start_order(config, publisher_wallet, consumer_wallet, data_NFT_and_DT)
     """Tests startOrder functionality without publish fees, consume fees."""
     data_nft, datatoken = data_NFT_and_DT
     # Mint datatokens to use
-    datatoken.mint(
-        consumer_wallet.address, Web3.toWei("10", "ether"), {"from": publisher_wallet}
-    )
-    datatoken.mint(
-        publisher_wallet.address, Web3.toWei("10", "ether"), {"from": publisher_wallet}
-    )
+    datatoken.mint(consumer_wallet.address, "10 ether", {"from": publisher_wallet})
+    datatoken.mint(publisher_wallet.address, "10 ether", {"from": publisher_wallet})
 
     # Set the fee collector address
     datatoken.setPaymentCollector(
@@ -133,10 +129,11 @@ def test_start_order(config, publisher_wallet, consumer_wallet, data_NFT_and_DT)
         transaction_parameters={"from": publisher_wallet},
     )
     # Check erc20 balances
-    assert datatoken.balanceOf(publisher_wallet.address) == Web3.toWei("9", "ether")
-    assert datatoken.balanceOf(
-        get_address_of_type(config, "OPFCommunityFeeCollector")
-    ) == Web3.toWei("1", "ether")
+    assert datatoken.balanceOf(publisher_wallet.address) == "9 ether"
+    assert (
+        datatoken.balanceOf(get_address_of_type(config, "OPFCommunityFeeCollector"))
+        == "1 ether"
+    )
 
     provider_fee_address = publisher_wallet.address
     provider_data = provider_fees["providerData"]
@@ -156,7 +153,7 @@ def test_start_order(config, publisher_wallet, consumer_wallet, data_NFT_and_DT)
         receipt.txid,
         provider_data,
         provider_signed,
-        Web3.toHex(Web3.toBytes(text="12345")),
+        b"12345",
         consumer_signed,
         consumer_wallet.address,
         {"from": publisher_wallet},
@@ -189,7 +186,7 @@ def test_start_order(config, publisher_wallet, consumer_wallet, data_NFT_and_DT)
             receipt.txid,
             provider_data,
             consumer_signed,
-            Web3.toHex(Web3.toBytes(text="12345")),
+            b"12345",
             consumer_signed,
             consumer_wallet.address,
             {"from": publisher_wallet},
@@ -213,7 +210,7 @@ def test_start_order(config, publisher_wallet, consumer_wallet, data_NFT_and_DT)
     datatoken.setPublishingMarketFee(
         publisher_wallet.address,
         get_address_of_type(config, "MockUSDC"),
-        Web3.toWei("1.2", "ether"),
+        "1.2 ether",
         {"from": publisher_wallet},
     )
 
@@ -235,15 +232,11 @@ def test_start_order(config, publisher_wallet, consumer_wallet, data_NFT_and_DT)
     initial_consumer_balance = datatoken.balanceOf(consumer_wallet.address)
 
     # Approve publisher to burn
-    datatoken.approve(
-        publisher_wallet.address, Web3.toWei("10", "ether"), {"from": consumer_wallet}
-    )
+    datatoken.approve(publisher_wallet.address, "10 ether", {"from": consumer_wallet})
 
     allowance = datatoken.allowance(consumer_wallet.address, publisher_wallet.address)
-    assert allowance == Web3.toWei("10", "ether")
-    datatoken.burnFrom(
-        consumer_wallet.address, Web3.toWei("2", "ether"), {"from": publisher_wallet}
-    )
+    assert allowance == "10 ether"
+    datatoken.burnFrom(consumer_wallet.address, "2 ether", {"from": publisher_wallet})
 
     assert datatoken.totalSupply() == initial_total_supply - Web3.toWei("2", "ether")
     assert datatoken.balanceOf(
@@ -255,28 +248,32 @@ def test_start_order(config, publisher_wallet, consumer_wallet, data_NFT_and_DT)
     datatoken.transferFrom(
         consumer_wallet.address,
         publisher_wallet.address,
-        Web3.toWei("1", "ether"),
+        "1 ether",
         {"from": publisher_wallet},
     )
-    assert datatoken.balanceOf(
-        consumer_wallet.address
-    ) == initial_consumer_balance - Web3.toWei("1", "ether")
+
+    one_ether_in_wei = Web3.toWei("1", "ether")
+
+    assert (
+        datatoken.balanceOf(consumer_wallet.address)
+        == initial_consumer_balance - one_ether_in_wei
+    )
 
     # Consumer should be able to burn his tokens too
     initial_consumer_balance = datatoken.balanceOf(consumer_wallet.address)
-    datatoken.burn(Web3.toWei("1", "ether"), {"from": consumer_wallet})
-    assert datatoken.balanceOf(
-        consumer_wallet.address
-    ) == initial_consumer_balance - Web3.toWei("1", "ether")
+    datatoken.burn("1 ether", {"from": consumer_wallet})
+    assert (
+        datatoken.balanceOf(consumer_wallet.address)
+        == initial_consumer_balance - one_ether_in_wei
+    )
 
     # Consumer should be able to transfer too
     initial_consumer_balance = datatoken.balanceOf(consumer_wallet.address)
-    datatoken.transfer(
-        publisher_wallet.address, Web3.toWei("1", "ether"), {"from": consumer_wallet}
+    datatoken.transfer(publisher_wallet.address, "1 ether", {"from": consumer_wallet})
+    assert (
+        datatoken.balanceOf(consumer_wallet.address)
+        == initial_consumer_balance - one_ether_in_wei
     )
-    assert datatoken.balanceOf(
-        consumer_wallet.address
-    ) == initial_consumer_balance - Web3.toWei("1", "ether")
 
 
 @pytest.mark.unit
@@ -288,7 +285,7 @@ def test_exceptions(consumer_wallet, config, publisher_wallet, DT):
     with pytest.raises(Exception, match="NOT MINTER"):
         datatoken.mint(
             consumer_wallet.address,
-            Web3.toWei("1", "ether"),
+            "1 ether",
             {"from": consumer_wallet},
         )
 
@@ -319,7 +316,7 @@ def test_exceptions(consumer_wallet, config, publisher_wallet, DT):
 
     # Should fail to setData if NOT erc20Deployer
     with pytest.raises(Exception, match="NOT DEPLOYER ROLE"):
-        datatoken.setData(Web3.toHex(text="SomeData"), {"from": consumer_wallet})
+        datatoken.setData(b"SomeData", {"from": consumer_wallet})
 
     # Should fail to call cleanPermissions if NOT NFTOwner
     with pytest.raises(Exception, match="not NFTOwner"):

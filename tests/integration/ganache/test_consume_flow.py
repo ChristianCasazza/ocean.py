@@ -6,7 +6,6 @@ import os
 import shutil
 
 import pytest
-from web3.main import Web3
 
 from ocean_lib.agreements.service_types import ServiceTypes
 from ocean_lib.data_provider.data_service_provider import DataServiceProvider
@@ -71,7 +70,7 @@ def test_consume_asset(config: dict, publisher_wallet, consumer_wallet, asset_ty
     # Mint 50 datatokens in consumer wallet from publisher. Max cap = 100
     dt.mint(
         consumer_wallet.address,
-        Web3.toWei("50", "ether"),
+        "50 ether",
         {"from": publisher_wallet},
     )
 
