@@ -188,7 +188,7 @@ class OneExchange:
         self,
         datatoken_amt: Union[int, str],
         tx_dict: dict,
-        max_basetoken_amt: Optional[int] = MAX_UINT256,
+        max_basetoken_amt=MAX_UINT256,
         consume_market_fee_addr: Optional[str] = ZERO_ADDRESS,
         consume_market_fee: Optional[int] = 0,
     ):

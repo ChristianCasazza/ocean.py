@@ -28,8 +28,8 @@ def test_dispense_and_order_with_non_defaults(
     DAI = Datatoken(config, get_address_of_type(config, "MockDAI"))
 
     _ = DT.create_dispenser(
-        max_tokens=to_wei(1),
-        max_balance=to_wei(1),
+        max_tokens="1 ether",
+        max_balance="1 ether",
         tx_dict={"from": publisher_wallet},
     )
 
@@ -44,9 +44,9 @@ def test_dispense_and_order_with_non_defaults(
     # Below, we test the quirk.
     match_s = "This address is not allowed to request DT"
     with pytest.raises(Exception, match=match_s):
-        DT.dispense(to_wei(1), {"from": consumer_wallet})
+        DT.dispense("1 ether", {"from": consumer_wallet})
 
-    consume_fee_amount = to_wei(2)
+    consume_fee_amount = "2 ether"
     consume_fee_address = consumer_wallet.address
     DT.setPublishingMarketFee(
         consume_fee_address,
@@ -102,13 +102,13 @@ def test_dispense_and_order_with_non_defaults(
     )
 
     assert tx
-    assert DT.totalSupply() == to_wei(0)
+    assert DT.totalSupply() == 0
 
     balance_opf_consume = DAI.balanceOf(opf_collector_address)
     balance_publish = USDC.balanceOf(publish_market_fees.address)
 
     assert balance_opf_consume - balance_opf_consume_before == 0
-    assert balance_publish - publish_bal_before == to_wei(2)
+    assert balance_publish - publish_bal_before == "2 ether"
 
     assert DT.balanceOf(DT.getPaymentCollector()) == 0
 
@@ -124,8 +124,8 @@ def test_dispense_and_order_with_defaults(
     )
 
     _ = DT.create_dispenser(
-        max_tokens=to_wei(1),
-        max_balance=to_wei(1),
+        max_tokens="1 ether",
+        max_balance="1 ether",
         tx_dict={"from": publisher_wallet},
     )
 
@@ -163,10 +163,10 @@ def test_buy_DT_and_order(
     DAI = Datatoken(config, get_address_of_type(config, "MockDAI"))
 
     exchange = DT.create_exchange(
-        rate=to_wei(1),
+        rate="1 ether",
         base_token_addr=USDC.address,
         tx_dict={"from": publisher_wallet},
-        publish_market_fee=to_wei(0.1),
+        publish_market_fee="0.1 ether",
         with_mint=True,
     )
     assert exchange.details.active
@@ -175,12 +175,12 @@ def test_buy_DT_and_order(
     if template_index == 2:
         with pytest.raises(Exception, match="This address is not allowed to swap"):
             exchange.buy_DT(
-                datatoken_amt=to_wei(1),
-                max_basetoken_amt=to_wei(1),
+                datatoken_amt="1 ether",
+                max_basetoken_amt="1 ether",
                 tx_dict={"from": consumer_wallet},
             )
 
-    consume_fee_amount = to_wei(2)
+    consume_fee_amount = "2 ether"
     consume_fee_address = consumer_wallet.address
     DT.setPublishingMarketFee(
         consume_fee_address,
@@ -219,7 +219,6 @@ def test_buy_DT_and_order(
 
     consume_bal1 = DAI.balanceOf(consume_fee_address)
     publish_bal1 = USDC.balanceOf(consumer_wallet.address)
-    provider_fee_bal1 = USDC.balanceOf(another_consumer_wallet.address)
 
     args = {
         "consumer": another_consumer_wallet.address,
@@ -234,8 +233,8 @@ def test_buy_DT_and_order(
     }
 
     if template_index == 2:
-        args["max_base_token_amount"] = to_wei(2.5)
-        args["consume_market_swap_fee_amount"] = to_wei(0.001)  # 1e15 => 0.1%
+        args["max_base_token_amount"] = "2.5 ether"
+        args["consume_market_swap_fee_amount"] = "0.001 ether"  # 1e15 => 0.1%
         args["consume_market_swap_fee_address"] = another_consumer_wallet.address
 
     tx = DT.buy_DT_and_order(**args)
@@ -243,9 +242,8 @@ def test_buy_DT_and_order(
     assert tx
 
     if template_index == 2:
-        assert DT.totalSupply() == to_wei(0)
+        assert DT.totalSupply() == 0
 
-    provider_fee_bal2 = USDC.balanceOf(another_consumer_wallet.address)
     consume_bal2 = DAI.balanceOf(consume_fee_address)
     publish_bal2 = USDC.balanceOf(publish_market_fees.address)
 

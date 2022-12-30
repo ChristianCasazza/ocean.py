@@ -27,15 +27,15 @@ def test_with_defaults(OCEAN, DT, alice, bob):
     )
 
     # Alice makes 100 datatokens available on the exchange
-    DT.mint(alice.address, to_wei(100), {"from": alice})
-    DT.approve(exchange.address, to_wei(100), {"from": alice})
+    DT.mint(alice.address, "100 ether", {"from": alice})
+    DT.approve(exchange.address, "100 ether", {"from": alice})
 
     # Bob lets exchange pull the OCEAN needed
     OCEAN.approve(exchange.address, MAX_UINT256, {"from": bob})
 
     # Bob buys 2 datatokens
     DT_bob1 = DT.balanceOf(bob)
-    _ = exchange.buy_DT(datatoken_amt=to_wei(2), tx_dict={"from": bob})
+    _ = exchange.buy_DT(datatoken_amt="2 ether", tx_dict={"from": bob})
     assert from_wei(DT.balanceOf(bob)) == from_wei(DT_bob1) + 2
 
     # all exchanges for this DT
@@ -71,15 +71,15 @@ def test_with_defaults(OCEAN, DT, alice, bob):
     assert from_wei(FRE.getOPCFee(ZERO_ADDRESS)) == 0.002  # 0.2% bc BT not approved
 
     # Test other attributes
-    assert exchange.BT_needed(to_wei(1.0), 0) >= to_wei(3)
-    assert exchange.BT_received(to_wei(1.0), 0) >= to_wei(2)
+    assert exchange.BT_needed("1 ether", 0) >= "3 ether"
+    assert exchange.BT_received("1 ether", 0) >= "2 ether"
     assert from_wei(exchange.get_rate()) == 3
     assert exchange.get_allowed_swapper() == ZERO_ADDRESS
     assert exchange.is_active()
 
     # ==========================================================================
     # Bob sells DT to the exchange
-    DT_sell = to_wei(1.5)
+    DT_sell = "1.5 ether"
 
     DT_bob1 = DT.balanceOf(bob)
     OCEAN_bob1 = OCEAN.balanceOf(bob)
@@ -107,7 +107,7 @@ def test_with_defaults(OCEAN, DT, alice, bob):
     assert exchange.is_active()
 
     # Test setting rate
-    exchange.set_rate(to_wei(1.1), {"from": alice})
+    exchange.set_rate("1.1 ether", {"from": alice})
     assert from_wei(exchange.get_rate()) == 1.1
 
 
@@ -115,10 +115,10 @@ def test_with_defaults(OCEAN, DT, alice, bob):
 def test_with_nondefaults(OCEAN, DT, alice, bob, carlos, dan, FRE):
     # =================================================================
     # Alice creates exchange. Bob's the owner, and carlos gets fees!
-    rate = to_wei(1)
-    publish_market_fee = to_wei(0.09)
+    rate = "1 ether"
+    publish_market_fee = "0.09 ether"
     publish_market_fee_collector = alice.address
-    consume_market_fee = to_wei(0.02)
+    consume_market_fee = "0.02 ether"
     consume_market_fee_addr = dan.address
 
     n_exchanges1 = FRE.getNumberOfExchanges()
@@ -148,12 +148,12 @@ def test_with_nondefaults(OCEAN, DT, alice, bob, carlos, dan, FRE):
 
     # =================================================================
     # Alice makes 100 datatokens available on the exchange
-    DT.mint(alice.address, to_wei(100), {"from": alice})
-    DT.approve(exchange.address, to_wei(100), {"from": alice})
+    DT.mint(alice.address, "100 ether", {"from": alice})
+    DT.approve(exchange.address, "100 ether", {"from": alice})
 
     # ==================================================================
     # Carlos buys DT. (Carlos spends OCEAN, Bob spends DT)
-    DT_buy = to_wei(11)
+    DT_buy = "11 ether"
     OCEAN_needed = exchange.BT_needed(DT_buy, consume_market_fee)
     OCEAN.transfer(carlos.address, OCEAN_needed, {"from": bob})  # give carlos OCN
 
@@ -174,7 +174,7 @@ def test_with_nondefaults(OCEAN, DT, alice, bob, carlos, dan, FRE):
 
     # ==========================================================================
     # Carlos sells DT to the exchange
-    DT_sell = to_wei(10)
+    DT_sell = "10 ether"
 
     DT_exchange1 = exchange.details.dt_supply
     OCEAN_exchange1 = exchange.details.bt_supply
