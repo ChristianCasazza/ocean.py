@@ -52,6 +52,8 @@ test_requirements = [
     "pylint",
     "pytest",
     "pytest-watch",
+    "pytest-timeout",
+    "pytest-sugar",
     "Pillow",
     "matplotlib",
     "mkcodes==0.1.1",

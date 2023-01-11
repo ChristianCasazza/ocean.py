@@ -45,7 +45,7 @@ jobs:
           sed -i 's#https://polygon-mainnet.infura.io/v3/$WEB3_INFURA_PROJECT_ID#https://polygon-rpc.com/#g; s#https://polygon-mumbai.infura.io/v3/$WEB3_INFURA_PROJECT_ID#https://rpc-mumbai.maticvigil.com#g' $HOME/.brownie/network-config.yaml
       - name: Test with pytest
         run: |
-          py.test --ignore=ocean_lib/aquarius --ignore=ocean_lib/assets --ignore=ocean_lib/data_provider --verbose
+          py.test ocean_lib/models --verbose --timeout=120 --timeout_method=thread
         env:
           REMOTE_TEST_PRIVATE_KEY1: ${{secrets.REMOTE_TEST_PRIVATE_KEY1}}
           REMOTE_TEST_PRIVATE_KEY2: ${{secrets.REMOTE_TEST_PRIVATE_KEY2}}
