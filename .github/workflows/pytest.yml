@@ -18,10 +18,10 @@ jobs:
     steps:
       - name: Setup Ocean.py
         uses: actions/checkout@v2
-      - name: Set up Python 3.10
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.8'
       - uses: actions/checkout@v2
         name: Checkout Barge
         with:
@@ -29,6 +29,8 @@ jobs:
           path: 'barge'
       - name: Run Barge
         working-directory: ${{ github.workspace }}/barge
+        env:
+          AQUARIUS_VERSION: 4.5.5
         run: |
           bash -x start_ocean.sh --no-dashboard 2>&1 --with-provider2 --with-rbac --with-c2d --with-thegraph > start_ocean.log &
           for i in $(seq 1 108); do
