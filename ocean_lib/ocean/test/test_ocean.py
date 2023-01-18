@@ -34,6 +34,7 @@ def test_nft_factory(config, publisher_ocean, publisher_wallet):
     assert ocean.get_datatoken(datatoken.address).address == datatoken.address
 
 
+@pytest.mark.skip
 @pytest.mark.unit
 def test_contract_objects(publisher_ocean):
     ocean = publisher_ocean

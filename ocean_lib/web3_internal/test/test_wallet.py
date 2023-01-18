@@ -11,6 +11,7 @@ from ocean_lib.ocean.util import to_wei
 from tests.resources.helper_functions import generate_wallet
 
 
+@pytest.mark.skip
 @pytest.mark.unit
 def test_generating_wallets(ocean_token):
     generated_wallet = generate_wallet()

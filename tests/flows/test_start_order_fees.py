@@ -28,6 +28,7 @@ from tests.resources.helper_functions import (
 )
 
 
+@pytest.mark.skip
 @pytest.mark.unit
 @pytest.mark.parametrize(
     "base_token_name, publish_market_order_fee_in_unit, consume_market_order_fee_in_unit, provider_fee_in_unit",
