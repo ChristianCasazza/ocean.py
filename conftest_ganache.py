@@ -2,6 +2,7 @@
 # Copyright 2022 Ocean Protocol Foundation
 # SPDX-License-Identifier: Apache-2.0
 #
+import logging
 from typing import Tuple
 
 import pytest
@@ -30,12 +31,11 @@ from tests.resources.helper_functions import (
     get_publisher_ocean_instance,
     get_publisher_wallet,
     get_wallet,
-    setup_logging,
 )
 
 _NETWORK = "ganache"
 
-setup_logging()
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True)
