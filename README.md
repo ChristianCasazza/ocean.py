@@ -3,7 +3,7 @@ Copyright 2022 Ocean Protocol Foundation
 SPDX-License-Identifier: Apache-2.0
 -->
 
-[![banner](https://raw.githubusercontent.com/oceanprotocol/art/master/github/repo-banner%402x.png)](https://oceanprotocol.com)
+[![banner](https://github.com/oceanprotocol/art/blob/main/splashes/ocean_py.png?raw=true)](https://oceanprotocol.com)
 
 <h1 align="center">ocean.py</h1>
 
